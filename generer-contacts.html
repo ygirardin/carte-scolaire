@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Générateur contacts.json</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,sans-serif;background:#0d0f14;color:#e8eaf0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.box{background:rgba(22,25,32,0.97);border:1px solid #2a2f3d;border-radius:16px;padding:32px;max-width:580px;width:100%;}
+h1{font-size:1.2rem;font-weight:800;margin-bottom:8px;}
+p{font-size:.85rem;color:#6b7280;line-height:1.6;margin-bottom:8px;}
+code{background:#1e2230;border:1px solid #2a2f3d;border-radius:5px;padding:2px 7px;font-size:.8rem;color:#93a8ff;}
+.note{font-size:.78rem;color:#6b7280;background:rgba(79,110,247,0.06);border:1px solid rgba(79,110,247,0.15);border-radius:8px;padding:10px 12px;margin-bottom:16px;line-height:1.6;}
+.btn{width:100%;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:8px;}
+.btn:hover{opacity:.88;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn.dl{background:linear-gradient(135deg,#16a34a,#15803d);}
+.log{background:#0d0f14;border:1px solid #2a2f3d;border-radius:8px;padding:14px;font-size:.76rem;font-family:monospace;min-height:60px;max-height:280px;overflow-y:auto;margin-top:12px;}
+.ok{color:#4ade80;}.err{color:#f87171;}.info{color:#93a8ff;}.warn{color:#fbbf24;}
+.bar{margin-top:10px;height:5px;background:#2a2f3d;border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#4f6ef7,#7c3aed);width:0%;transition:width .3s;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>📥 Générateur — contacts.json</h1>
+  <p>Récupère téléphone + email de tous les collèges publics depuis l'API officielle.</p>
+  <div class="note">
+    ⚠️ <strong>Important :</strong> ouvrez ce fichier depuis votre site GitHub Pages 
+    (<code>https://ygirardin.github.io/carte-scolaire/generer-contacts.html</code>) 
+    ou depuis un serveur local — pas en double-cliquant sur le fichier.
+  </div>
+  <button class="btn" id="btnStart" onclick="start()">🚀 Démarrer (~2-3 minutes)</button>
+  <button class="btn dl" id="btnDl" style="display:none" onclick="download()">⬇️ Télécharger contacts.json</button>
+  <div class="bar"><div class="bar-fill" id="bar"></div></div>
+  <div class="log" id="log">Prêt.</div>
+</div>
+<script>
+var contacts = {};
+var resultJson = null;
+
+// UAIs des collèges publics (chargés depuis colleges.json)
+var COLLEGE_UAIS = null;
+
+function log(msg, cls) {
+  var el = document.getElementById('log');
+  var d = document.createElement('div');
+  if (cls) d.className = cls;
+  d.textContent = msg;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+function setBar(pct) { document.getElementById('bar').style.width = Math.min(100,pct) + '%'; }
+
+async function loadCollegeUAIs() {
+  var r = await fetch('data/colleges.json');
+  var data = await r.json();
+  COLLEGE_UAIS = {};
+  data.forEach(function(c) { COLLEGE_UAIS[c.uai] = true; });
+  return Object.keys(COLLEGE_UAIS).length;
+}
+
+async function start() {
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('btnDl').style.display = 'none';
+  document.getElementById('log').innerHTML = '';
+  contacts = {};
+  resultJson = null;
+
+  // Charger la liste des UAIs de nos collèges
+  log('Chargement de la liste des collèges...', 'info');
+  try {
+    var nbUAI = await loadCollegeUAIs();
+    log(nbUAI + ' collèges publics à enrichir.', 'ok');
+  } catch(e) {
+    log('Erreur chargement colleges.json : ' + e.message, 'err');
+    log('Assurez-vous d\'ouvrir ce fichier depuis GitHub Pages.', 'warn');
+    document.getElementById('btnStart').disabled = false;
+    return;
+  }
+
+  // Télécharger tous les établissements sans filtre de type
+  // (le filtre type_etablissement peut échouer selon l'encodage)
+  log('Connexion à data.education.gouv.fr...', 'info');
+  
+  var offset = 0, total = null, errors = 0, matched = 0;
+  var LIMIT = 100;
+
+  while (true) {
+    // Pas de filtre type - on prend tout et on filtre côté client sur nos UAIs
+    var url = 'https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records'
+      + '?select=identifiant_de_l_etablissement%2Ctelephone%2Cmail'
+      + '&limit=' + LIMIT
+      + '&offset=' + offset;
+
+    try {
+      var r = await fetch(url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      var d = await r.json();
+
+      if (total === null) {
+        total = d.total_count || 70000;
+        log('Total établissements dans l\'annuaire : ' + total, 'info');
+      }
+
+      var rows = d.results || [];
+      if (!rows.length) break;
+
+      rows.forEach(function(row) {
+        var uai = (row.identifiant_de_l_etablissement || '').toUpperCase().trim();
+        // Filtrer : seulement nos collèges publics
+        if (!COLLEGE_UAIS[uai]) return;
+        var tel  = (row.telephone || '').trim();
+        var mail = (row.mail || '').trim();
+        if (tel || mail) {
+          contacts[uai] = {};
+          if (tel)  contacts[uai].t = tel;
+          if (mail) contacts[uai].m = mail;
+          matched++;
+        }
+      });
+
+      offset += rows.length;
+      setBar(offset / total * 100);
+
+      if (offset % 5000 < LIMIT) {
+        log(offset + '/' + total + ' parcourus — ' + matched + ' collèges avec contact', 'info');
+      }
+      if (rows.length < LIMIT || matched >= Object.keys(COLLEGE_UAIS).length) break;
+      await new Promise(function(res) { setTimeout(res, 50); });
+
+    } catch(e) {
+      errors++;
+      log('Erreur à offset ' + offset + ' : ' + e.message, 'err');
+      if (errors > 8) { log('Trop d\'erreurs. Arrêt.', 'err'); break; }
+      await new Promise(function(res) { setTimeout(res, 2000); });
+    }
+  }
+
+  setBar(100);
+  log('', '');
+  log('✓ Terminé : ' + matched + ' collèges avec contact sur ' + Object.keys(COLLEGE_UAIS).length, 'ok');
+  
+  if (matched === 0) {
+    log('⚠ Aucun contact trouvé ! Vérifiez que colleges.json est accessible.', 'err');
+  } else {
+    log('Cliquez "Télécharger" et uploadez contacts.json dans data/ sur GitHub.', 'warn');
+    resultJson = JSON.stringify(contacts);
+    document.getElementById('btnDl').style.display = 'block';
+  }
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnStart').textContent = '🔄 Recommencer';
+}
+
+function download() {
+  if (!resultJson) return;
+  var blob = new Blob([resultJson], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'contacts.json';
+  a.click();
+}
+</script>
+</body>
+</html>
