@@ -227,10 +227,9 @@ function openPopup(m,c){
       +'</div>'
     +'</div>';
   m.bindPopup(div,{maxWidth:300}).openPopup();
-  m.once('popupopen',function(){
-    loadSect(c);
-    fetchFiche(c.uai);
-  });
+  // Appel direct (pas via once) pour éviter les problèmes de timing
+  loadSect(c);
+  setTimeout(function(){ fetchFiche(c.uai); }, 50);
 }
 
 // Contacts embarqués depuis contacts.json (aucun appel API externe)
@@ -239,9 +238,16 @@ var CONTACTS = null;
 function loadContacts(callback) {
   if (CONTACTS !== null) { callback(); return; }
   fetch(DATA_PATH + 'contacts.json')
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
     .then(function(d) { CONTACTS = d; callback(); })
-    .catch(function() { CONTACTS = {}; callback(); });
+    .catch(function(e) {
+      console.error('contacts.json error:', e);
+      CONTACTS = {};
+      callback();
+    });
 }
 
 function fetchFiche(uai) {
@@ -252,18 +258,23 @@ function renderFiche(uai) {
   var box = document.getElementById('ficheBox_' + uai);
   if (!box) return;
   var c = CONTACTS[uai];
-  if (!c || (!c.tel && !c.mail)) {
+  // Accepte toutes les variantes de clés : t/m (court) ou tel/mail ou telephone/mail
+  var tel  = c ? (c.t || c.tel || c.telephone || '') : '';
+  var mail = c ? (c.m || c.mail || '') : '';
+  tel  = String(tel).trim();
+  mail = String(mail).trim();
+  if (!tel && !mail) {
     box.innerHTML = '<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Pas de contact renseigné.</div>';
     return;
   }
   var html = '';
-  if (c.tel) html += '<div style="font-size:.78rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;">'
+  if (tel) html += '<div style="font-size:.78rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;">'
     + '<span style="color:#6b7280;font-size:15px;">&#128222;</span>'
-    + '<a href="tel:' + c.tel.replace(/\s/g,'') + '" style="color:#93a8ff;text-decoration:none;font-weight:500;">' + esc(c.tel) + '</a>'
+    + '<a href="tel:' + tel.replace(/\s/g,'') + '" style="color:#93a8ff;text-decoration:none;font-weight:500;">' + esc(tel) + '</a>'
     + '</div>';
-  if (c.mail) html += '<div style="font-size:.78rem;display:flex;align-items:center;gap:8px;">'
+  if (mail) html += '<div style="font-size:.78rem;display:flex;align-items:center;gap:8px;">'
     + '<span style="color:#6b7280;font-size:15px;">&#9993;</span>'
-    + '<a href="mailto:' + esc(c.mail) + '" style="color:#93a8ff;text-decoration:none;font-weight:500;">' + esc(c.mail) + '</a>'
+    + '<a href="mailto:' + esc(mail) + '" style="color:#93a8ff;text-decoration:none;font-weight:500;">' + esc(mail) + '</a>'
     + '</div>';
   box.innerHTML = html;
 }
