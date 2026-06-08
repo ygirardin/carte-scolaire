@@ -1,940 +1,3 @@
-
-Claude a terminé la réponse.
-Dans les data du ministère de l'éducation nationale, peux tu me dire si tu trouve une liste des collèges de frances ayant soit : 
-une Segpa
-Une Ulis
-Une Upe2a
-Une section sportive
-Ou d'autre section particulière
-
-17:15
-
-Web recherché
-Web recherché
-Bonne nouvelle : le jeu de données existe bien et est très complet. Voici ce que j'ai trouvé :
-
-✅ Oui, ces données existent sur data.education.gouv.fr
-Le jeu de données : Annuaire de l'éducation
-Il recense les établissements publics et privés ouverts en France, couvrant le premier et second degré, les établissements médico-sociaux, les CIO et les établissements administratifs. Sources : ONISEP et RAMSESE. 
-Éducation Nationale
-
-L'annuaire contient notamment : nom, adresse, contact, statut public ou privé, nombre d'élèves, restauration, hébergement, sections spécifiques (ULIS, SEGPA, international, sport), lien vers la fiche ONISEP, réseau d'éducation prioritaire, etc. 
-data.gouv.fr
-
-📥 Comment accéder aux données
-URL directe du dataset : 👉 https://data.education.gouv.fr/explore/dataset/fr-en-annuaire-education/
-
-Vous pouvez :
-
-Filtrer en ligne par type d'établissement (Collège) + colonne SEGPA, ULIS, UPE2A, section sportive
-Télécharger en CSV, JSON, Excel
-Utiliser l'API pour des requêtes filtrées
-🔍 Champs disponibles (sections particulières)
-D'après la documentation du jeu de données, les colonnes pertinentes pour les collèges sont :
-
-Champ	Contenu
-segpa	OUI / NON
-ulis	OUI / NON
-upe2a	OUI / NON
-sect_sportive	OUI / NON
-sect_internationale	OUI / NON
-cl_hor_amenage	Classe à horaires aménagés (musique, danse, etc.)
-type_etablissement	Filtrer sur "Collège"
-💡 Exemple de requête API filtrée
-Pour obtenir directement tous les collèges avec une SEGPA ou une ULIS :
-
-https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records
-  ?where=type_etablissement="Collège" AND (segpa="1" OR ulis="1" OR upe2a="1")
-  &select=nom_etablissement,code_postal,nom_commune,segpa,ulis,upe2a,sect_sportive
-  &limit=100
-📊 Pour info : quelques chiffres de cadrage
-Les dispositifs particuliers (SEGPA, ULIS et UPE2A) sont plus présents dans les collèges d'éducation prioritaire. La SEGPA est présente dans environ un tiers des établissements accueillant une ULIS ou une UPE2A. Les collèges offrant une section sportive accueillent aussi fréquemment une SEGPA (31 %). 
-Ministère de l'Education Nationale
-Ministère de l'Education Nationale
-
-Souhaitez-vous que je construise un outil interactif qui interroge directement l'API du ministère pour vous permettre de filtrer, rechercher et exporter la liste des collèges avec ces sections ?
-
-Penses tu qu'il serait possible de revoir le site github afin d'ajouter une carte pour chaque type de catégorie (une carte des segpa, une carte des ulis, etc...)
-
-17:25
-Je veux bien vous aider, mais je ne vois pas de lien vers un site GitHub dans notre conversation. Pouvez-vous me partager l'URL du dépôt ?
-
-https://ygirardin.github.io/carte-scolaire/
-
-17:26
-
-Web recherché
-Web recherché
-Je ne peux pas accéder directement au dépôt GitHub de ygirardin (il n'apparaît pas dans les résultats de recherche, il est peut-être privé ou peu indexé). Mais j'ai bien analysé le site live. Voici ce que je peux vous proposer :
-
-Ce que j'ai compris du site
-Le site ygirardin.github.io/carte-scolaire contient :
-
-Une page d'accueil index.html avec deux tuiles (Collèges / Lycées)
-Une page colleges.html — carte interactive avec recherche par adresse
-Une page lycees.html — carte par département
-Ce qu'il faudrait ajouter
-Pour chaque dispositif (SEGPA, ULIS, UPE2A, Section sportive, Section internationale), il faudrait :
-
-1. Nouvelles pages HTML dédiées
-Par exemple :
-
-segpa.html — Carte des collèges avec SEGPA
-ulis.html — Carte des collèges avec ULIS
-upe2a.html — Carte des collèges avec UPE2A
-sections-sportives.html
-sections-internationales.html
-2. Requête API filtrée
-Chaque page interrogerait l'API du ministère avec un filtre sur le champ correspondant :
-
-https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records
-  ?where=type_etablissement="Collège" AND segpa="1"
-  &select=nom_etablissement,latitude,longitude,adresse_1,code_postal,nom_commune
-  &limit=100&offset=0
-3. Mise à jour de index.html
-Ajouter des nouvelles tuiles sur la page d'accueil pour chaque type de dispositif.
-
-Voulez-vous que je génère le code ?
-Je peux créer :
-
-Option A — Une page unique avec un sélecteur (SEGPA / ULIS / UPE2A / etc.) qui affiche la carte filtrée correspondante
-
-Option B — Des pages séparées comme sur le site actuel, avec une nouvelle tuile par dispositif sur l'index
-
-Quelle option vous convient le mieux ? Et avez-vous accès au dépôt GitHub pour pouvoir pousser les fichiers ?
-
-Option B
-
-17:27
-Je vais créer les fichiers nécessaires. Laissez-moi d'abord regarder le code source du site existant pour m'y adapter parfaitement.
-
-
-Fetched: Carte scolaire — Collèges publics France
-Fetched: Carte scolaire — Collèges publics France
-Le rendu markdown masque le vrai code HTML. Je vais récupérer le source brut via le raw GitHub.
-
-
-Web recherché
-Web recherché
-Je n'arrive pas à accéder au code source brut du dépôt (probablement privé). Je vais donc créer les fichiers en me basant précisément sur ce que j'ai observé du site live, en reproduisant fidèlement le style et la structure existante.
-
-
-Checking available skills for frontend
-Checking available skills for frontend
-Je vais maintenant créer tous les fichiers. Je commence par bien analyser la page d'accueil pour reproduire exactement son style.
-
-
-Fetch the raw HTML source of the index page via curl
-Fetch the raw HTML source of the index page via curl
-Le réseau est restreint. Je vais créer les fichiers en me basant fidèlement sur ce que j'ai observé du site. Je crée d'abord un fichier modèle de carte, puis l'index mis à jour.
-
-
-2 fichiers créés
-2 fichiers créés
-Maintenant je génère les 5 autres pages en adaptant uniquement les variables de configuration :
-
-
-Exécuté 4 commandes
-Exécuté 4 commandes
-Tout est correct. Je présente les 7 fichiers :
-
-
-Presented 7 files
-Presented 7 files
-Voici les 7 fichiers à déposer à la racine de votre dépôt GitHub (en remplacement de l'index.html existant) :
-
-Ce qui a été créé
-index.html — page d'accueil mise à jour avec deux sections :
-
-Établissements : Collèges (existant) + Lycées (existant)
-Dispositifs inclusifs & pédagogiques : 6 nouvelles tuiles colorées
-6 nouvelles pages de carte (même structure, couleur distinctive par dispositif) :
-
-Fichier	Dispositif	Couleur
-segpa.html	SEGPA	🟠 Orange
-ulis.html	ULIS	🟢 Vert
-upe2a.html	UPE2A	🩵 Teal
-sections-sportives.html	Section sportive	🔴 Rouge
-sections-internationales.html	Section internationale	🟣 Violet
-classes-ha.html	Classes à horaires aménagés	🟣 Violet
-Comment ça fonctionne
-Chaque page interroge directement l'API data.education.gouv.fr au chargement, filtre sur le champ correspondant (segpa=1, ulis=1, etc.), affiche les marqueurs sur la carte Leaflet et une liste latérale avec recherche par nom/ville et filtre par département.
-
-Note : les chiffres approximatifs sur les tuiles (ex. "~1 800 collèges") seront remplacés par le vrai total récupéré en temps réel au chargement de chaque carte. Il faudra peut-être ajuster le nom exact du champ API (sect_sportive, cl_hor_amenage) selon la réponse réelle de l'API — je les ai estimés d'après la documentation connue.
-
-
-Index
-Code · HTML 
-
-Segpa
-Code · HTML 
-
-Ulis
-Code · HTML 
-
-Upe2a
-Code · HTML 
-
-Sections sportives
-Code · HTML 
-
-Sections internationales
-Code · HTML 
-
-Classes ha
-Code · HTML 
-j'ai bien fait l'import mais les cartes reste vide
-https://github.com/ygirardin/carte-scolaire
-Ne pourrait on pas faire comme pour le dossier data afin que les carte pioche les informations au plus proche ?
-
-18:18
-Laissez-moi d'abord regarder le dépôt et comprendre comment les cartes existantes chargent leurs données.
-
-
-Fetched: GitHub - ygirardin/carte-scolaire
-Fetched: GitHub - ygirardin/carte-scolaire
-Je vois le dossier data ! Regardons ce qu'il contient et comment colleges.html charge ses données.
-
-
-Web recherché
-Web recherché
-Je ne peux pas lire les fichiers bruts. Mais j'ai vu dans le dépôt un dossier data/ — regardons ce qu'il contient depuis GitHub Pages.
-
-
-Web recherché
-Web recherché
-Je ne peux pas lire les fichiers bruts du dépôt. Mais la logique est claire : le dossier data/ contient des fichiers JSON locaux, et colleges.html les charge avec un fetch('./data/...') — d'où les cartes qui fonctionnent. Mes pages, elles, appellent l'API externe qui est bloquée par CORS sur GitHub Pages.
-
-La solution : générer des fichiers JSON locaux (un par dispositif) à mettre dans data/, et les pages les chargent directement. Je vais créer un script Python pour les générer + les 6 pages HTML mises à jour.
-
-
-Tester si le réseau permet d'accéder à l'API education.gouv.fr
-Tester si le réseau permet d'accéder à l'API education.gouv.fr
-Le réseau est restreint ici. Je vais créer le script Python que vous exécuterez localement pour générer les JSON, puis les pages HTML qui les lisent. C'est exactement le même principe que votre dossier data/.
-
-
-A exécuté une commande, fichier créé
-A exécuté une commande, fichier créé
-Maintenant le template HTML unique pour toutes les pages de dispositifs :
-
-
-Exécuté 2 commandes, fichier créé
-Exécuté 2 commandes, fichier créé
-Parfait. Maintenant l'index.html mis à jour, et le script de génération :
-
-
-Fichier créé, a exécuté une commande, lu un fichier
-Fichier créé, a exécuté une commande, lu un fichier
-Voici tous les fichiers. Voilà exactement comment procéder :
-
-🔧 Marche à suivre
-Étape 1 — Générer les JSON en local
-Le problème des cartes vides venait du fait que l'API externe data.education.gouv.fr est bloquée par CORS depuis GitHub Pages. La solution est d'utiliser le même principe que votre dossier data/ existant : des fichiers JSON locaux.
-
-Dans un terminal, à la racine de votre dépôt :
-
-bash
-pip install requests
-python generer-data-dispositifs.py
-Ce script va télécharger les données et créer 6 fichiers dans data/ :
-
-data/segpa.json
-data/ulis.json
-data/upe2a.json
-data/sections-sportives.json
-data/sections-internationales.json
-data/classes-ha.json
-Étape 2 — Remplacer les fichiers HTML
-Remplacez dans votre dépôt : index.html, segpa.html, ulis.html, upe2a.html, sections-sportives.html, sections-internationales.html, classes-ha.html.
-
-Étape 3 — Committer tout
-bash
-git add data/ index.html segpa.html ulis.html upe2a.html sections-sportives.html sections-internationales.html classes-ha.html
-git commit -m "Ajout des cartes dispositifs avec données locales"
-git push
-Chaque page chargera désormais son JSON depuis data/ exactement comme colleges.html — sans appel API externe, sans problème CORS.
-
-
-Generer data dispositifs
-PY 
-
-Index
-Code · HTML 
-
-Segpa
-Code · HTML 
-
-Ulis
-Code · HTML 
-
-Upe2a
-Code · HTML 
-
-Sections sportives
-Code · HTML 
-
-Sections internationales
-Code · HTML 
-
-Classes ha
-Code · HTML 
-je n'ai pas compris les étapes
-
-18:26
-Pas de souci, je vais vous expliquer ça très simplement, étape par étape.
-
-Vous avez besoin de faire 3 choses
-Objectif : créer les fichiers JSON de données, puis les mettre sur GitHub avec les nouvelles pages HTML.
-
-Étape 1 — Télécharger et installer Python
-Si vous ne l'avez pas déjà : 👉 https://www.python.org/downloads/
-
-Cliquez "Download Python", installez-le. Cochez bien "Add Python to PATH" pendant l'installation.
-
-Étape 2 — Préparer votre dossier GitHub en local
-Vous devez avoir une copie locale de votre dépôt sur votre ordinateur. Si ce n'est pas déjà le cas :
-
-Allez sur https://github.com/ygirardin/carte-scolaire
-Cliquez le bouton vert "Code" → "Download ZIP"
-Décompressez le ZIP quelque part (ex: Bureau ou Documents)
-Étape 3 — Placer les fichiers téléchargés
-Prenez les fichiers que je viens de vous donner :
-
-generer-data-dispositifs.py → à mettre à la racine du dossier (au même niveau que index.html)
-index.html, segpa.html, ulis.html, etc. → remplacez les anciens fichiers au même endroit
-Étape 4 — Lancer le script pour générer les données
-Ouvrez un terminal (sur Windows : cherchez "Invite de commandes" ou "PowerShell")
-Naviguez vers votre dossier :
-cd C:\Users\VotreNom\Bureau\carte-scolaire-main
-Installez la dépendance :
-pip install requests
-Lancez le script :
-python generer-data-dispositifs.py
-Vous verrez s'afficher quelque chose comme :
-
-⏳ Téléchargement SEGPA……… 1823 établissements
-✅ data/segpa.json
-⏳ Téléchargement ULIS……… 2950 établissements
-✅ data/ulis.json
-...
-✅ Terminé.
-Un dossier data/ avec 6 fichiers JSON sera créé automatiquement.
-
-Étape 5 — Remettre tout sur GitHub
-La façon la plus simple si vous n'utilisez pas Git en ligne de commande :
-
-Allez sur https://github.com/ygirardin/carte-scolaire
-Pour chaque fichier HTML modifié (index.html, segpa.html, etc.) : cliquez sur le fichier → icône crayon → collez le nouveau contenu → "Commit changes"
-Pour les fichiers JSON dans data/ : cliquez sur le dossier data/ → "Add file" → "Upload files" → glissez vos 6 fichiers JSON → "Commit changes"
-Dites-moi à quelle étape vous bloquez et je vous aide !
-
-
-Microsoft Windows [version 10.0.19045.6456] (c) Microsoft Corporation. Tous droits réservés. C:\Users\Vhalrael>cd C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main> pip install requests Collecting requests
-
-pasted
-
-voici ce qui ressort :
-
-18:36
-Le script tourne bien, mais l'API renvoie des erreurs 400 — les noms des champs ne sont pas exacts. Je dois d'abord vérifier les vrais noms des colonnes dans ce dataset.
-
-
-Web recherché
-Web recherché
-J'ai trouvé les vrais noms dans le résultat ! Regardez ce snippet de l'API réelle :
-
-segpa, section_arts, section_cinema, section_theatre, **section_sport**, **section_internationale**, section_europeenne
-
-Les noms corrects sont section_sport (pas sect_sportive) et section_internationale (pas sect_internationale). Et pour les champs booléens, la valeur n'est pas "1" mais probablement true. Je corrige le script tout de suite.
-
-
-Fetched: API DATA GOUV -> GRIST | LaDocLéLa
-Fetched: API DATA GOUV -> GRIST | LaDocLéLa
-Parfait, j'ai maintenant les vrais noms des champs. Ce sont segpa, ulis, section_sport, section_internationale, et pour les classes à horaires aménagés il faut chercher. Les valeurs sont des booléens (true/false) et non "1". Je corrige le script immédiatement.
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Voilà le script corrigé ! Les erreurs venaient de deux mauvais noms de champs dans l'API :
-
-Ce qu'on mettait ❌	Vrai nom ✅
-sect_sportive="1"	section_sport=true
-sect_internationale="1"	section_internationale=true
-cl_hor_amenage="1"	section_arts=true
-segpa="1"	segpa=true
-ulis="1"	ulis=true
-Ce que vous devez faire :
-
-Téléchargez le nouveau fichier generer-data-dispositifs.py ci-dessus
-Remplacez l'ancien dans votre dossier carte-scolaire-main
-Relancez dans l'invite de commandes :
-python generer-data-dispositifs.py
-Cette fois ça devrait créer les 6 fichiers JSON dans data/ sans erreur. Dites-moi ce qui s'affiche !
-
-
-Generer data dispositifs
-PY 
-
-Microsoft Windows [version 10.0.19045.6456] (c) Microsoft Corporation. Tous droits réservés. C:\Users\Vhalrael>cd C:\Users\Vhalrael\Downloads\carte-scolaire-main C:\Users\Vhalrael\Downloads\carte-scolaire-main>python generer-data-dispositifs.py python: can't open file 'C:\Users\Vhalrael\Down
-
-pasted
-
-18:44
-Le problème est simple : le fichier generer-data-dispositifs.py n'est pas dans le bon dossier. Il faut d'abord le copier au bon endroit.
-
-Faites ceci :
-
-Ouvrez l'Explorateur de fichiers Windows
-Allez dans Téléchargements → carte-scolaire-main
-Vérifiez ce que vous voyez dedans — est-ce qu'il y a un autre sous-dossier carte-scolaire-main à l'intérieur ?
-La première fois vous étiez dans carte-scolaire-main\carte-scolaire-main (deux niveaux), maintenant vous êtes dans carte-scolaire-main (un seul niveau) — le script n'est peut-être dans aucun des deux.
-
-La solution la plus simple :
-
-Glissez le fichier generer-data-dispositifs.py que vous avez téléchargé directement dans le dossier où se trouvent vos fichiers index.html, segpa.html, etc.
-
-Pour savoir exactement où ils sont, tapez ceci dans l'invite de commandes :
-
-dir C:\Users\Vhalrael\Downloads\carte-scolaire-main
-Et envoyez-moi ce que ça affiche — je vous dirai exactement où mettre le fichier.
-
-
-Microsoft Windows [version 10.0.19045.6456] (c) Microsoft Corporation. Tous droits réservés. C:\Users\Vhalrael>cd C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>cd C:\Users\Vhalrael\Downloads\carte-scolai
-
-pasted
-
-18:45
-L'API rejette toutes les requêtes avec 400. Le problème vient du filtre type_etablissement="Collège" — l'accent sur le "è" pose probablement problème. Laissez-moi regarder directement ce que l'API renvoie sans filtre pour voir les vraies valeurs.
-
-
-Web recherché
-Web recherché
-Laissez-moi tester l'API directement pour voir ce qu'elle accepte comme syntaxe.
-
-
-Web recherché
-Web recherché
-Je ne peux pas tester directement. Changeons complètement d'approche : au lieu d'utiliser le filtre where, je vais utiliser le paramètre refine qui est plus simple et toujours supporté par cette API. Je réécris le script avec une stratégie différente — télécharger tous les collèges d'un coup et filtrer localement en Python.
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Voilà le nouveau script ! La stratégie a complètement changé pour éviter les erreurs :
-
-Avant (cassé) : on essayait de filtrer directement dans l'API avec where=segpa=true → l'API rejetait la requête.
-
-Maintenant (robuste) : on télécharge tous les collèges en une fois avec refine=type_etablissement:Collège, puis on filtre en Python sur votre ordinateur — beaucoup plus fiable.
-
-Ce que vous devez faire :
-
-Téléchargez ce nouveau fichier generer-data-dispositifs.py
-Remplacez l'ancien dans le dossier C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main
-Relancez dans l'invite de commandes :
-cd C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main
-python generer-data-dispositifs.py
-Vous devriez voir une barre de progression puis 6 lignes ✅. Dites-moi ce qui s'affiche !
-
-
-Generer data dispositifs
-PY 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python generer-data-dispositifs.py
-📥 Téléchargement de tous les collèges publics…
-   (cela peut prendre 2-3 minutes)
-❌ Erreur réseau : 400 Client Error: Bad Request for url: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records?refine=type_etablissement%3AColl%C3%A8ge&select=nom_etablissement%2Cadresse_1%2Ccode_postal%2Cnom_commune%2Clatitude%2Clongitude%2Cidentifiant_de_l_etablissement%2Ctype_etablissement%2Cstatut_public_prive%2Csegpa%2Culis%2Cupe2a%2Csection_sport%2Csection_internationale%2Csection_arts%2Csection_cinema%2Csection_theatre&limit=100&offset=0
-   Vérifiez votre connexion internet.
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>
-
-Afficher plus
-18:49
-Le problème vient du refine avec l'accent sur "Collège". Laissez-moi tester la vraie syntaxe de cette API.
-
-
-Web recherché
-Web recherché
-Excellent ! J'ai trouvé la syntaxe exacte dans le résultat GitHub : c'est l'API v2 (pas v2.1) et la syntaxe where utilise des guillemets droits sans encodage. Je vois aussi que select avec trop de champs cause le 400. Je réécris le script complètement avec la bonne URL.
-
-
-Réécrire avec API v2 et code_nature=340 pour les collèges
-Réécrire avec API v2 et code_nature=340 pour les collèges
-Attendez — avant de vous donner encore un script qui risque d'échouer, laissez-moi d'abord tester la vraie syntaxe de l'API en faisant une vraie requête de diagnostic.
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Avant de relancer le script principal, je préfère qu'on fasse d'abord un diagnostic pour identifier exactement quelle syntaxe l'API accepte.
-
-Faites ceci :
-
-Téléchargez test-api.py
-Mettez-le dans le même dossier (carte-scolaire-main\carte-scolaire-main)
-Lancez dans l'invite de commandes :
-python test-api.py
-Et copiez-moi le résultat complet — ça me dira exactement quel format l'API accepte, et je pourrai corriger le vrai script une bonne fois pour toutes sans tâtonner.
-
-
-Test api
-PY 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python test-api.py
-=== TEST API data.education.gouv.fr ===
-✅ v2.1 sans filtre
-   Status: 200 | Total: 68936
-   Exemple: Ecole primaire publique Simone Veil | type=Ecole | segpa=None
-✅ v2.1 refine Collège
-   Status: 200 | Total: 9173
-   Exemple: Collège Jean Rous | type=Collège | segpa=0
-✅ v2.1 where code_nature 340
-   Status: 200 | Total: 7663
-   Exemple: Collège Jean Rous | type=Collège | segpa=0
-✅ v2 sans filtre
-   Status: 200 | Total: 68936
-   Exemple: Ecole primaire publique Simone Veil | type=Ecole | segpa=None
-=== FIN DU DIAGNOSTIC ===
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>
-
-Afficher plus
-18:51
-Parfait ! Maintenant je sais exactement ce qui fonctionne :
-
-✅ refine=type_etablissement:Collège → 9173 collèges, segpa vaut 0 ou 1 (pas true)
-Le problème précédent venait du select avec trop de champs qui faisait planter l'URL
-Je réécris le script final avec ces informations exactes :
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Voilà le script final corrigé ! Grâce au diagnostic on sait maintenant exactement :
-
-✅ refine=type_etablissement:Collège fonctionne
-✅ segpa vaut 0 ou 1 (pas true/false)
-✅ Il faut faire deux passages séparés (coordonnées d'un côté, dispositifs de l'autre) pour éviter les URLs trop longues
-Remplacez l'ancien generer-data-dispositifs.py par ce nouveau, puis relancez :
-
-python generer-data-dispositifs.py
-Vous devriez voir la progression défiler et 6 lignes ✅ à la fin. Dites-moi ce qui s'affiche !
-
-
-Generer data dispositifs
-PY 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python generer-data-dispositifs.py
-📥 Téléchargement des collèges en cours...
-   (quelques minutes selon votre connexion)
-   Total : 9173 collèges à télécharger
-   Progression : 9173/9173 (100%)
-✅ 9173 collèges téléchargés.
-🔍 Récupération des UAI par dispositif...
-   Téléchargement des champs dispositifs...
-Traceback (most recent call last):
-  File "C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main\generer-data-dispositifs.py", line 82, in <module>
-    total2 = data["total_count"]
-KeyError: 'total_count'
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>
-
-Afficher plus
-18:54
-Presque ! Le 2e appel retourne une structure légèrement différente. Simplifions : on fait un seul téléchargement avec tous les champs d'un coup, en réduisant le select au strict minimum.
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Remplacez l'ancien fichier et relancez :
-
-python generer-data-dispositifs.py
-Le changement clé : au lieu de deux téléchargements séparés, on fait un seul avec tous les champs d'un coup. Le diagnostic a confirmé que ça fonctionne avec ce format de refine.
-
-
-Generer data dispositifs
-PY 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python generer-data-dispositifs.py
-📥 Téléchargement des collèges en cours...
-   (quelques minutes selon votre connexion)
-   Total : 0 collèges
-   Progression : 0/0 (0%)
-✅ 0 collèges téléchargés.
-💾 Génération des fichiers JSON...
-  ✅ data/segpa.json                                    0 établissements
-  ✅ data/ulis.json                                     0 établissements
-  ✅ data/upe2a.json                                    0 établissements
-  ✅ data/sections-sportives.json                       0 établissements
-  ✅ data/sections-internationales.json                 0 établissements
-  ✅ data/classes-ha.json                               0 établissements
-🎉 Terminé ! Uploadez le dossier data/ sur GitHub.
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>
-
-Afficher plus
-18:55
-Le select avec trop de champs fait retourner 0 résultats. Le diagnostic a montré que ça marchait avec peu de champs. Je vais faire deux appels séparés mais en gérant correctement la clé total_count qui peut être absente.
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Remplacez et relancez. Cette fois si quelque chose ne va pas, le script affichera exactement les clés reçues pour qu'on comprenne le problème. Copiez-moi tout ce qui s'affiche !
-
-
-Generer data dispositifs
-PY 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python generer-data-dispositifs.py
-📥 Téléchargement des collèges en cours...
-   (quelques minutes selon votre connexion)
-   Total : 0 collèges
-   Progression : 0/0 (0%)
-✅ 0 collèges téléchargés.
-💾 Génération des fichiers JSON...
-  ✅ data/segpa.json                                    0 établissements
-  ✅ data/ulis.json                                     0 établissements
-  ✅ data/upe2a.json                                    0 établissements
-  ✅ data/sections-sportives.json                       0 établissements
-  ✅ data/sections-internationales.json                 0 établissements
-  ✅ data/classes-ha.json                               0 établissements
-🎉 Terminé ! Uploadez le dossier data/ sur GitHub.
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python generer-data-dispositifs.py
-📥 Téléchargement des coordonnées géographiques...
-   Total : 9173
-   9173/9173 (100%)
-   ✅ 9173 enregistrements
-   9068 collèges géolocalisés indexés.
-📥 Téléchargement des dispositifs...
-   ⚠️  Clés reçues : ['error_code', 'message']
-   ⚠️  Réponse : {'error_code': 'ODSQLError', 'message': 'ODSQL query is malformed: Unknown field: upe2a. Clause(s) containing the error(s): select.'}
-💾 Génération des fichiers JSON...
-  ✅ data/segpa.json                                    0 établissements
-  ✅ data/ulis.json                                     0 établissements
-  ✅ data/upe2a.json                                    0 établissements
-  ✅ data/sections-sportives.json                       0 établissements
-  ✅ data/sections-internationales.json                 0 établissements
-  ✅ data/classes-ha.json                               0 établissements
-🎉 Terminé ! Uploadez le dossier data/ sur GitHub.
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>
-
-Afficher plus
-18:57
-Le message est très clair : upe2a n'existe pas dans ce dataset ! Je dois trouver les vrais noms de tous les champs. Lançons un script de découverte rapide.
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Remplacez test-api.py et lancez :
-
-python test-api.py
-Copiez-moi tout ce qui s'affiche — ça va lister les vrais noms de champs et on règle ça définitivement !
-
-
-Test api
-PY 
-peut-être n'y a t-il pas de data sur le dispositif appelé UPE2A ou UPEAA , voici le retour : 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python test-api.py
-=== TOUS LES CHAMPS DISPONIBLES ===
-
-  adresse_1                                     = 'Route de Bompas'
-  adresse_2                                     = None
-  adresse_3                                     = None
-  appartenance_education_prioritaire            = None
-  apprentissage                                 = '0'
-  code_academie                                 = '11'
-  code_bassin_formation                         = '11123'
-  code_circonscription                          = None
-  code_commune                                  = '66141'
-  code_departement                              = '066'
-  code_nature                                   = 340
-  code_postal                                   = '66380'
-  code_region                                   = '76'
-  code_type_contrat_prive                       = '99'
-  code_zone_animation_pedagogique               = '066003'
-  coordx_origine                                = 694086.6
-  coordy_origine                                = 6181992.3
-  date_maj_ligne                                = '2026-05-27'
-  date_ouverture                                = '2007-09-01'
-  ecole_elementaire                             = None
-  ecole_maternelle                              = None
-  epsg_origine                                  = 'EPSG:2154'
-  etablissement_mere                            = None
-  etat                                          = 'OUVERT'
-  fax                                           = '04 68 80 18 71'
-  fiche_onisep                                  = 'https://www.onisep.fr/http/redirection/etablissement/slug/ENS.17707'
-  greta                                         = '1'
-  hebergement                                   = 0
-  identifiant_de_l_etablissement                = '0660866H'
-  latitude                                      = 42.73747474016985
-  libelle_academie                              = 'Montpellier'
-  libelle_bassin_formation                      = 'PERPIGNAN NORD'
-  libelle_departement                           = 'Pyrénées-Orientales'
-  libelle_nature                                = 'COLLEGE'
-  libelle_region                                = 'Occitanie'
-  libelle_zone_animation_pedagogique            = 'ROUSSILLON FENOUILLEDES'
-  longitude                                     = 2.9278708754832627
-  lycee_agricole                                = '0'
-  lycee_des_metiers                             = '0'
-  lycee_militaire                               = '0'
-  mail                                          = 'ce.0660866h@ac-montpellier.fr'
-  ministere_tutelle                             = "MINISTERE DE L'EDUCATION NATIONALE"
-  multi_uai                                     = 0
-  nom_circonscription                           = None
-  nom_commune                                   = 'Pia'
-  nom_etablissement                             = 'Collège Jean Rous'
-  pial                                          = '0660866H'
-  position                                      = {'lon': 2.9278708754832627, 'lat': 42.73747474016985}
-  post_bac                                      = '0'
-  precision_localisation                        = 'Rue'
-  restauration                                  = 1
-  rpi_concentre                                 = 0
-  rpi_disperse                                  = None
-  section_arts                                  = '0'
-  section_cinema                                = '0'
-  section_europeenne                            = '0'
-  section_internationale                        = '0'
-  section_sport                                 = '1'
-  section_theatre                               = '0'
-  segpa                                         = '0'
-  siren_siret                                   = '20000966000016'
-  statut_public_prive                           = 'Public'
-  telephone                                     = '04 68 80 18 70'
-  type_contrat_prive                            = 'SANS OBJET'
-  type_etablissement                            = 'Collège'
-  type_rattachement_etablissement_mere          = None
-  ulis                                          = 1
-  voie_generale                                 = '0'
-  voie_professionnelle                          = '0'
-  voie_technologique                            = '0'
-  web                                           = 'https://jean-rous.mon-ent-occitanie.fr/'
-
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python test-api.py
-
-Afficher plus
-19:00
-Parfait ! On a tout ce qu'il faut. Je vois :
-
-upe2a n'existe pas dans le dataset → on le supprime
-ulis vaut 1 (entier) tandis que les autres valent '0'/'1' (chaîne) → notre fonction est_actif gère déjà les deux
-Tous les autres champs sont confirmés
-Je génère le script final corrigé :
-
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Remplacez et relancez. Cette fois on est sûrs car :
-
-upe2a supprimé (n'existe pas dans le dataset)
-Les 5 autres champs sont tous confirmés visuellement dans le retour du diagnostic
-Les deux appels séparés ont des select courts → pas de risque d'URL trop longue
-python generer-data-dispositifs.py
-
-Generer data dispositifs
-PY 
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>python generer-data-dispositifs.py
-📥 Téléchargement des coordonnées...
-   Total : 9173
-   9173/9173 (100%)
-   ✅ 9173 enregistrements
-   9068 collèges géolocalisés.
-📥 Téléchargement des dispositifs...
-   Total : 9173
-   9173/9173 (100%)
-   ✅ 9173 enregistrements
-💾 Génération des fichiers JSON...
-  ✅ data/segpa.json                                 1489 établissements
-  ✅ data/ulis.json                                  4152 établissements
-  ✅ data/sections-sportives.json                    2709 établissements
-  ✅ data/sections-internationales.json               184 établissements
-  ✅ data/classes-ha.json                               1 établissements
-🎉 Terminé ! Uploadez le dossier data/ sur GitHub.
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>
-
-Afficher plus
-19:04
-🎉 Ça marche ! Les données sont générées. Maintenant il faut uploader le dossier data/ sur GitHub.
-
-Étape finale — Uploader sur GitHub
-Allez sur https://github.com/ygirardin/carte-scolaire
-Cliquez sur le dossier data
-Cliquez "Add file" → "Upload files"
-Ouvrez l'Explorateur Windows et naviguez vers :
-   C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main\data\
-Sélectionnez les 5 fichiers JSON (segpa.json, ulis.json, sections-sportives.json, sections-internationales.json, classes-ha.json) et glissez-les dans la page GitHub
-En bas, cliquez "Commit changes"
-Attendez 1-2 minutes que GitHub Pages se mette à jour, puis testez : 👉 https://ygirardin.github.io/carte-scolaire/segpa.html
-
-Dites-moi ce que vous voyez !
-
-1780938453848_image.png
-toujours rien
-
-19:07
-La carte charge mais affiche "— établissements" et reste vide. Le JSON est bien là mais la page dit encore "Chargement…" en haut à droite. Le problème vient du chemin data/classes-ha.json — GitHub Pages ne trouve pas le fichier car il est peut-être dans le mauvais dossier.
-
-Vérifiez d'abord que le fichier est accessible en ouvrant cette URL dans votre navigateur :
-
-👉 https://ygirardin.github.io/carte-scolaire/data/classes-ha.json
-
-Est-ce que vous voyez du texte JSON ou une erreur 404 ?
-
-Et pour SEGPA qui devrait avoir 1489 établissements :
-
-👉 https://ygirardin.github.io/carte-scolaire/data/segpa.json
-
-Dites-moi ce que vous voyez sur ces deux URLs.
-
-
-[{"uai":"0240047W","nom":"Collège Jean Moulin","adr":"1 boulevard Jean Moulin","cp":"24660","ville":"Coulounieix-Chamiers","dept":"24","lat":45.19259699739512,"lng":0.6876523836577759},{"uai":"9730145V","nom":"Collège Élie Castor","adr":"Cité Nouvelle","cp":"97315","ville":"Sinnamary","dept":"97","l
-
-pasted
-
-pour HA : [{"uai":"9710035L","nom":"Collège Mireille Choisy","adr":"Gustavia","cp":"97098","ville":"Saint-Barthélemy","dept":"97","lat":17.898658406466016,"lng":-62.84943972424056}]
-pour segpa :
-
-19:10
-Les données sont bien générées ! Je vois les JSON dans les fichiers. Maintenant le problème est que les pages HTML ne trouvent pas les fichiers. Vérifions où se trouvent exactement les JSON par rapport aux pages HTML.
-
-Pouvez-vous taper ceci dans l'invite de commandes :
-
-dir data
-Et aussi :
-
-dir *.html
-Envoyez-moi ce que ça affiche, pour voir si les HTML et le dossier data/ sont bien au même endroit.
-
-
-C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main>dir data Le volume dans le lecteur C n’a pas de nom. Le numéro de série du volume est 9634-14ED Répertoire de C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main\data 08/06/2026 18:55 <DIR> .
-
-pasted
-
-19:11
-Tout est en place ! Les fichiers JSON sont bien dans data/ et les HTML au même niveau. Les données sont générées correctement :
-
-segpa.json : 262 Ko ✅
-ulis.json : 734 Ko ✅
-sections-sportives.json : 478 Ko ✅
-sections-internationales.json : 32 Ko ✅
-classes-ha.json : 173 octets (1 seul établissement, c'est correct) ✅
-Il reste juste à uploader les 5 nouveaux JSON sur GitHub. Voici comment :
-
-Sur GitHub.com
-Allez sur https://github.com/ygirardin/carte-scolaire/tree/main/data
-Cliquez "Add file" → "Upload files"
-Depuis l'Explorateur Windows, ouvrez :
-   C:\Users\Vhalrael\Downloads\carte-scolaire-main\carte-scolaire-main\data\
-Glissez ces 5 fichiers dans la page GitHub :
-segpa.json
-ulis.json
-sections-sportives.json
-sections-internationales.json
-classes-ha.json
-Cliquez "Commit changes"
-Attendez 1-2 minutes, puis testez : 👉 https://ygirardin.github.io/carte-scolaire/segpa.html
-
-Les marqueurs devraient apparaître sur la carte !
-
-aucun cngement pour les cartes
-
-19:52
-Regardons directement le code source de votre segpa.html sur GitHub pour comprendre pourquoi les données ne s'affichent pas.
-
-
-Web recherché
-Web recherché
-Je ne peux pas accéder directement aux pages. Ouvrez votre navigateur et appuyez sur F12 pour ouvrir les outils de développement, puis allez sur l'onglet Console. Ensuite naviguez vers :
-
-👉 https://ygirardin.github.io/carte-scolaire/segpa.html
-
-Copiez-moi tout ce qui apparaît en rouge dans la console.
-
-En attendant, je parie que le problème vient du fait que vos fichiers HTML datent du 16/06 mais ils appellent data/segpa.json — or le segpa.html sur GitHub est peut-être encore l'ancienne version qui appelait l'API externe. Vérifions : allez sur :
-
-👉 https://github.com/ygirardin/carte-scolaire/blob/main/segpa.html
-
-Est-ce que vous voyez dans le code la ligne :
-
-javascript
-const DATA_URL = 'data/segpa.json';
-ou quelque chose avec data.education.gouv.fr ?
-
-1780941205918_image.png
-1780941194764_image.png
-19:53
-C'est très clair ! Le segpa.html sur GitHub est encore l'ancienne version qui appelle l'API externe (data.education.gouv.fr) au lieu de lire data/segpa.json. Vos nouveaux fichiers HTML n'ont pas été uploadés sur GitHub !
-
-Il faut uploader les fichiers HTML. Voici comment faire directement sur GitHub :
-
-Pour chaque fichier HTML (segpa, ulis, sections-sportives, sections-internationales, classes-ha, index) :
-Allez sur https://github.com/ygirardin/carte-scolaire/blob/main/segpa.html
-Cliquez sur l'icône crayon ✏️ (en haut à droite du fichier)
-Sélectionnez tout le contenu (Ctrl+A) et supprimez-le
-Ouvrez votre fichier local segpa.html avec le Bloc-notes :
-   Clic droit sur le fichier → Ouvrir avec → Bloc-notes
-Sélectionnez tout (Ctrl+A), copiez (Ctrl+C)
-Collez dans l'éditeur GitHub (Ctrl+V)
-Cliquez "Commit changes"
-Répétez pour chaque fichier : ulis.html, sections-sportives.html, sections-internationales.html, classes-ha.html, index.html.
-
-C'est fastidieux mais c'est la seule cause du problème — les JSON sont bien là, c'est juste que les HTML sur GitHub sont les anciennes versions qui appellent encore l'API externe.
-
-
-<!DOCTYPE html> <html lang="fr"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Carte UPE2A — Collèges publics France</title> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min
-
-pasted
-
-19:56
-Je vois que upe2a.html est bien la nouvelle version (elle lit data/upe2a.json). Mais segpa.html appelle encore l'ancienne API ! Il faut remplacer les fichiers HTML un par un sur GitHub.
-
-La façon la plus rapide : utilisez l'interface GitHub directement. Pour chaque fichier :
-
-Pour segpa.html :
-
-Allez sur : https://github.com/ygirardin/carte-scolaire/blob/main/segpa.html
-Cliquez le crayon ✏️
-Ctrl+A pour tout sélectionner, puis supprimez
-Ouvrez segpa.html avec le Bloc-notes depuis votre PC, Ctrl+A, Ctrl+C
-Collez dans GitHub, puis "Commit changes"
-Répétez pour ulis.html, sections-sportives.html, sections-internationales.html, classes-ha.html, index.html
-
-Ou plus rapide — en une seule commande : Si Git est installé sur votre PC, tapez dans l'invite de commandes depuis votre dossier :
-
-git add .
-git commit -m "Mise à jour des cartes dispositifs"
-git push
-Est-ce que Git est installé ? Tapez git --version dans l'invite de commandes pour vérifier.
-
-404
-File not found
-The site configured at this address does not contain the requested file.
-If this is your site, make sure that the filename case matches the URL as well as any file permissions. For root URLs (like http://example.com/) you must provide an index.html file.
-[Read the full documentation](https://help.github.com/pages/) for more information about using GitHub Pages.
-[GitHub Status](https://githubstatus.com/) — [@githubstatus](https://twitter.com/githubstatus)
-
-19:59
-L'index.html a été écrasé et n'existe plus ! Il faut le remettre en urgence. Voici comment :
-
-Allez sur https://github.com/ygirardin/carte-scolaire
-Cliquez "Add file" → "Create new file"
-Nommez-le index.html
-Ouvrez votre fichier local index.html avec le Bloc-notes, Ctrl+A, Ctrl+C
-Collez dans l'éditeur GitHub
-Cliquez "Commit changes"
-Faites ça en premier, c'est urgent pour que le site refonctionne !
-
-peux tu me le redonner sans upe2a ?
-
-20:00
-
-A exécuté une commande, lu un fichier
-A exécuté une commande, lu un fichier
-Voilà ! Ce nouvel index.html :
-
-✅ Sans UPE2A
-✅ Avec les vrais chiffres issus de vos JSON (1 489 SEGPA, 4 152 ULIS, 2 709 sections sportives, 184 sections internationales, 1 classe à horaires aménagés)
-Sur GitHub, allez sur votre dépôt → "Add file" → "Create new file" → nommez-le index.html → collez le contenu → "Commit changes".
-
-
-Index
-Code · HTML 
-
-
-
-
-
-Claude est une IA et peut faire des erreurs. Veuillez vérifier les réponses.
-
-
-raw
-Index · HTML
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -955,28 +18,28 @@ Index · HTML
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
            background: var(--gray-50); color: var(--gray-900); }
- 
+
     header { background:#fff; border-bottom:1px solid var(--gray-200);
              padding: 0 20px; height: 52px; display:flex; align-items:center; }
     .logo { font-size:.9rem; font-weight:700; color:var(--blue); text-decoration:none; }
- 
+
     .hero { background: linear-gradient(135deg,#1e3a8a,#1a56db 60%,#2563eb);
             color:#fff; padding:52px 20px 60px; text-align:center; }
     .hero h1 { font-size:clamp(1.6rem,4vw,2.4rem); font-weight:800; line-height:1.2; margin-bottom:14px; }
     .hero h1 small { display:block; font-size:.5em; font-weight:400; opacity:.8; margin-top:6px; }
     .hero p { font-size:1rem; opacity:.85; max-width:540px; margin:0 auto; line-height:1.6; }
- 
+
     main { max-width:1080px; margin:0 auto; padding:44px 20px 72px; }
- 
+
     .sec-title {
       font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
       color:var(--gray-500); margin-bottom:18px; padding-bottom:9px;
       border-bottom:1px solid var(--gray-200);
     }
- 
+
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
             gap:18px; margin-bottom:44px; }
- 
+
     a.card {
       background:#fff; border:1px solid var(--gray-200); border-radius:10px;
       text-decoration:none; color:inherit;
@@ -985,7 +48,7 @@ Index · HTML
       transition:box-shadow .18s, transform .18s;
     }
     a.card:hover { box-shadow:0 4px 16px rgba(0,0,0,.12); transform:translateY(-2px); }
- 
+
     .stripe { height:4px; }
     .cbody  { padding:18px 20px 20px; flex:1; display:flex; flex-direction:column; }
     .cicon  { font-size:1.65rem; margin-bottom:10px; }
@@ -995,18 +58,18 @@ Index · HTML
     .cs-val  { font-size:.88rem; font-weight:700; }
     .cs-lbl  { font-size:.68rem; color:var(--gray-500); }
     .ccta { margin-top:14px; font-size:.77rem; font-weight:700; }
- 
+
     .t-blue   .stripe { background:var(--blue);   } .t-blue   .ccta { color:var(--blue); }
     .t-green  .stripe { background:var(--green);  } .t-green  .ccta { color:var(--green); }
     .t-red    .stripe { background:var(--red);     } .t-red    .ccta { color:var(--red); }
     .t-orange .stripe { background:var(--orange);  } .t-orange .ccta { color:var(--orange); }
     .t-purple .stripe { background:var(--purple);  } .t-purple .ccta { color:var(--purple); }
- 
+
     footer { border-top:1px solid var(--gray-200); padding:22px; text-align:center;
              font-size:.78rem; color:var(--gray-500); }
     footer a { color:var(--blue); text-decoration:none; }
     footer a:hover { text-decoration:underline; }
- 
+
     @media(max-width:560px){
       .grid { grid-template-columns:1fr; }
       .hero { padding:36px 14px 44px; }
@@ -1015,23 +78,23 @@ Index · HTML
   </style>
 </head>
 <body>
- 
+
 <header>
   <a class="logo" href="/">🏫 Carte scolaire nationale</a>
 </header>
- 
+
 <div class="hero">
   <h1>Collèges &amp; Lycées publics en France
     <small>Données ouvertes — Ministère de l'Éducation nationale</small>
   </h1>
   <p>Secteurs scolaires, dispositifs inclusifs et sections spécifiques sur tout le territoire.</p>
 </div>
- 
+
 <main>
- 
+
   <div class="sec-title">Établissements</div>
   <div class="grid">
- 
+
     <a class="card t-blue" href="colleges.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1046,7 +109,7 @@ Index · HTML
         <div class="ccta">Ouvrir la carte →</div>
       </div>
     </a>
- 
+
     <a class="card t-blue" href="lycees.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1060,12 +123,12 @@ Index · HTML
         <div class="ccta">Ouvrir la carte →</div>
       </div>
     </a>
- 
+
   </div>
- 
+
   <div class="sec-title">Dispositifs inclusifs &amp; sections spécifiques</div>
   <div class="grid">
- 
+
     <a class="card t-orange" href="segpa.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1078,7 +141,7 @@ Index · HTML
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
- 
+
     <a class="card t-green" href="ulis.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1091,7 +154,7 @@ Index · HTML
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
- 
+
     <a class="card t-red" href="sections-sportives.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1104,7 +167,7 @@ Index · HTML
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
- 
+
     <a class="card t-purple" href="sections-internationales.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1117,7 +180,7 @@ Index · HTML
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
- 
+
     <a class="card t-purple" href="classes-ha.html">
       <div class="stripe"></div>
       <div class="cbody">
@@ -1130,29 +193,16 @@ Index · HTML
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
- 
+
   </div>
 </main>
- 
+
 <footer>
   Données : <a href="https://data.education.gouv.fr">data.education.gouv.fr</a> ·
   Géocodage : <a href="https://adresse.data.gouv.fr">Base Adresse Nationale</a> ·
   Formations : <a href="https://www.onisep.fr">Onisep</a><br>
   Licence ouverte · Données susceptibles de ne pas être à jour
 </footer>
- 
+
 </body>
 </html>
- 
-
-
-
-
-
-
-
-
-
-
-
-
