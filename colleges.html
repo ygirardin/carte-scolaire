@@ -233,37 +233,39 @@ function openPopup(m,c){
   });
 }
 
-// Fiche établissement : uniquement téléphone et email
-function fetchFiche(uai){
-  var url='https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records'
-    +'?select=telephone%2Cmail'
-    +'&where=identifiant_de_l_etablissement%3D%22'+uai+'%22'
-    +'&limit=1';
-  fetch(url)
-    .then(function(r){return r.json();})
-    .then(function(d){renderFiche(uai,d);})
-    .catch(function(e){
-      var box=document.getElementById('ficheBox_'+uai);
-      if(box) box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Contact non disponible.</div>';
-    });
+// Contacts embarqués depuis contacts.json (aucun appel API externe)
+var CONTACTS = null;
+
+function loadContacts(callback) {
+  if (CONTACTS !== null) { callback(); return; }
+  fetch(DATA_PATH + 'contacts.json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) { CONTACTS = d; callback(); })
+    .catch(function() { CONTACTS = {}; callback(); });
 }
-function renderFiche(uai,data){
-  var box=document.getElementById('ficheBox_'+uai);if(!box)return;
-  var r=(data&&data.results&&data.results.length)?data.results[0]:null;
-  if(!r){box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Contact non disponible.</div>';return;}
-  var tel=String(r.telephone||'').trim();
-  var mail=String(r.mail||'').trim();
-  if(!tel&&!mail){box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Pas de contact renseigné.</div>';return;}
-  var html='';
-  if(tel) html+='<div style="font-size:.78rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;">'
-    +'<span style="color:#6b7280;font-size:15px;">📞</span>'
-    +'<a href="tel:'+tel.replace(/\s/g,'')+'" style="color:#93a8ff;text-decoration:none;font-weight:500;">'+esc(tel)+'</a>'
-    +'</div>';
-  if(mail) html+='<div style="font-size:.78rem;display:flex;align-items:center;gap:8px;">'
-    +'<span style="color:#6b7280;font-size:15px;">✉️</span>'
-    +'<a href="mailto:'+esc(mail)+'" style="color:#93a8ff;text-decoration:none;font-weight:500;">'+esc(mail)+'</a>'
-    +'</div>';
-  box.innerHTML=html;
+
+function fetchFiche(uai) {
+  loadContacts(function() { renderFiche(uai); });
+}
+
+function renderFiche(uai) {
+  var box = document.getElementById('ficheBox_' + uai);
+  if (!box) return;
+  var c = CONTACTS[uai];
+  if (!c || (!c.tel && !c.mail)) {
+    box.innerHTML = '<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Pas de contact renseigné.</div>';
+    return;
+  }
+  var html = '';
+  if (c.tel) html += '<div style="font-size:.78rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;">'
+    + '<span style="color:#6b7280;font-size:15px;">&#128222;</span>'
+    + '<a href="tel:' + c.tel.replace(/\s/g,'') + '" style="color:#93a8ff;text-decoration:none;font-weight:500;">' + esc(c.tel) + '</a>'
+    + '</div>';
+  if (c.mail) html += '<div style="font-size:.78rem;display:flex;align-items:center;gap:8px;">'
+    + '<span style="color:#6b7280;font-size:15px;">&#9993;</span>'
+    + '<a href="mailto:' + esc(c.mail) + '" style="color:#93a8ff;text-decoration:none;font-weight:500;">' + esc(c.mail) + '</a>'
+    + '</div>';
+  box.innerHTML = html;
 }
 
 // Recherche
