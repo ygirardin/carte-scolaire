@@ -223,7 +223,7 @@ function openPopup(m,c){
     +'<div id="ficheBox_'+c.uai+'" style="margin-top:8px;padding-top:8px;border-top:1px solid #2a2f3d;">'
       +'<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:#93a8ff;">'
         +'<div style="width:9px;height:9px;border:2px solid rgba(79,110,247,0.3);border-top-color:#4f6ef7;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></div>'
-        +'Chargement de la fiche...'
+        +'Chargement du contact...'
       +'</div>'
     +'</div>';
   m.bindPopup(div,{maxWidth:300}).openPopup();
@@ -233,45 +233,36 @@ function openPopup(m,c){
   });
 }
 
-// Fiche établissement via API annuaire
+// Fiche établissement : uniquement téléphone et email
 function fetchFiche(uai){
-  var fields='telephone,mail,web,ulis,section_sport,restauration,hebergement,appartenance_education_prioritaire,segpa,section_internationale';
   var url='https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/records'
-    +'?select='+encodeURIComponent(fields)
-    +'&where='+encodeURIComponent('identifiant_de_l_etablissement="'+uai+'"')
+    +'?select=telephone%2Cmail'
+    +'&where=identifiant_de_l_etablissement%3D%22'+uai+'%22'
     +'&limit=1';
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(d){renderFiche(uai,d);})
-    .catch(function(){renderFiche(uai,null);});
+    .catch(function(e){
+      var box=document.getElementById('ficheBox_'+uai);
+      if(box) box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Contact non disponible.</div>';
+    });
 }
 function renderFiche(uai,data){
   var box=document.getElementById('ficheBox_'+uai);if(!box)return;
   var r=(data&&data.results&&data.results.length)?data.results[0]:null;
-  if(!r){box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Informations non disponibles.</div>';return;}
+  if(!r){box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Contact non disponible.</div>';return;}
+  var tel=String(r.telephone||'').trim();
+  var mail=String(r.mail||'').trim();
+  if(!tel&&!mail){box.innerHTML='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Pas de contact renseigné.</div>';return;}
   var html='';
-  var rep=r.appartenance_education_prioritaire||'';
-  if(rep&&rep!=='Non'&&rep!=='0'&&rep!==''){
-    var isRepPlus=rep.toLowerCase().indexOf('rep+')>=0||rep==='REP+';
-    var repLabel=isRepPlus?'REP+':'REP',repColor=isRepPlus?'#ea580c':'#d97706';
-    html+='<div style="margin-bottom:8px;"><span style="background:'+repColor+';color:#fff;border-radius:100px;padding:2px 10px;font-size:10px;font-weight:800;letter-spacing:.06em;">'+repLabel+'</span>'
-      +' <span style="font-size:.72rem;color:#9ca3af;">Éducation Prioritaire</span></div>';
-  }
-  var tel=r.telephone||'';
-  if(tel)html+='<div style="font-size:.75rem;margin-bottom:5px;display:flex;align-items:center;gap:7px;"><span style="color:#6b7280;">📞</span><a href="tel:'+tel.replace(/\s/g,'')+'" style="color:#93a8ff;text-decoration:none;">'+esc(tel)+'</a></div>';
-  var mail=r.mail||'';
-  if(mail)html+='<div style="font-size:.75rem;margin-bottom:5px;display:flex;align-items:center;gap:7px;"><span style="color:#6b7280;">✉</span><a href="mailto:'+mail+'" style="color:#93a8ff;text-decoration:none;">'+esc(mail)+'</a></div>';
-  var web=r.web||'';
-  if(web){var wu=web.startsWith('http')?web:'http://'+web;html+='<div style="font-size:.75rem;margin-bottom:8px;display:flex;align-items:center;gap:7px;"><span style="color:#6b7280;">🌐</span><a href="'+wu+'" target="_blank" rel="noopener" style="color:#93a8ff;text-decoration:none;">Site web</a></div>';}
-  var tags=[];
-  var ulis=r.ulis||'';if(ulis&&ulis!=='0'&&String(ulis).toLowerCase()!=='non'&&ulis!=='')tags.push({label:String(ulis).length>2&&String(ulis).toLowerCase()!=='oui'?'ULIS — '+ulis:'ULIS',bg:'#5b21b6',fg:'#ede9fe'});
-  var sport=r.section_sport||'';if(sport&&sport!=='0'&&String(sport).toLowerCase()!=='non'&&sport!=='')tags.push({label:'Section sportive',bg:'#0e7490',fg:'#cffafe'});
-  var heberg=r.hebergement||'';if(heberg&&heberg!=='0'&&String(heberg).toLowerCase()!=='non'&&heberg!=='')tags.push({label:'Internat',bg:'#065f46',fg:'#d1fae5'});
-  var resto=r.restauration||'';if(resto&&resto!=='0'&&String(resto).toLowerCase()!=='non'&&resto!=='')tags.push({label:'Restauration',bg:'#1e3a5f',fg:'#bfdbfe'});
-  var segpa=r.segpa||'';if(segpa&&segpa!=='0'&&String(segpa).toLowerCase()!=='non'&&segpa!=='')tags.push({label:'SEGPA',bg:'#7c2d12',fg:'#fed7aa'});
-  var intl=r.section_internationale||'';if(intl&&intl!=='0'&&String(intl).toLowerCase()!=='non'&&intl!=='')tags.push({label:'Section internationale',bg:'#1e40af',fg:'#bfdbfe'});
-  if(tags.length){html+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">';tags.forEach(function(t){html+='<span style="background:'+t.bg+';color:'+t.fg+';border-radius:4px;padding:2px 7px;font-size:10px;font-weight:600;white-space:nowrap;">'+esc(t.label)+'</span>';});html+='</div>';}
-  if(!html)html='<div style="font-size:.72rem;color:#6b7280;font-style:italic;">Aucune information supplémentaire.</div>';
+  if(tel) html+='<div style="font-size:.78rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;">'
+    +'<span style="color:#6b7280;font-size:15px;">📞</span>'
+    +'<a href="tel:'+tel.replace(/\s/g,'')+'" style="color:#93a8ff;text-decoration:none;font-weight:500;">'+esc(tel)+'</a>'
+    +'</div>';
+  if(mail) html+='<div style="font-size:.78rem;display:flex;align-items:center;gap:8px;">'
+    +'<span style="color:#6b7280;font-size:15px;">✉️</span>'
+    +'<a href="mailto:'+esc(mail)+'" style="color:#93a8ff;text-decoration:none;font-weight:500;">'+esc(mail)+'</a>'
+    +'</div>';
   box.innerHTML=html;
 }
 
