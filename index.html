@@ -19,27 +19,33 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
            background: var(--gray-50); color: var(--gray-900); }
 
+    /* header */
     header { background:#fff; border-bottom:1px solid var(--gray-200);
              padding: 0 20px; height: 52px; display:flex; align-items:center; }
     .logo { font-size:.9rem; font-weight:700; color:var(--blue); text-decoration:none; }
 
+    /* hero */
     .hero { background: linear-gradient(135deg,#1e3a8a,#1a56db 60%,#2563eb);
             color:#fff; padding:52px 20px 60px; text-align:center; }
     .hero h1 { font-size:clamp(1.6rem,4vw,2.4rem); font-weight:800; line-height:1.2; margin-bottom:14px; }
     .hero h1 small { display:block; font-size:.5em; font-weight:400; opacity:.8; margin-top:6px; }
     .hero p { font-size:1rem; opacity:.85; max-width:540px; margin:0 auto; line-height:1.6; }
 
+    /* main */
     main { max-width:1080px; margin:0 auto; padding:44px 20px 72px; }
 
+    /* section label */
     .sec-title {
       font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
       color:var(--gray-500); margin-bottom:18px; padding-bottom:9px;
       border-bottom:1px solid var(--gray-200);
     }
 
+    /* grid */
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
             gap:18px; margin-bottom:44px; }
 
+    /* card */
     a.card {
       background:#fff; border:1px solid var(--gray-200); border-radius:10px;
       text-decoration:none; color:inherit;
@@ -54,17 +60,22 @@
     .cicon  { font-size:1.65rem; margin-bottom:10px; }
     .ctitle { font-size:.97rem; font-weight:700; margin-bottom:6px; }
     .cdesc  { font-size:.82rem; color:var(--gray-500); line-height:1.55; flex:1; }
+
     .cstats { display:flex; gap:14px; margin-top:14px; padding-top:12px; border-top:1px solid var(--gray-100); }
     .cs-val  { font-size:.88rem; font-weight:700; }
     .cs-lbl  { font-size:.68rem; color:var(--gray-500); }
+
     .ccta { margin-top:14px; font-size:.77rem; font-weight:700; }
 
+    /* themes */
     .t-blue   .stripe { background:var(--blue);   } .t-blue   .ccta { color:var(--blue); }
     .t-green  .stripe { background:var(--green);  } .t-green  .ccta { color:var(--green); }
+    .t-teal   .stripe { background:var(--teal);   } .t-teal   .ccta { color:var(--teal); }
     .t-red    .stripe { background:var(--red);     } .t-red    .ccta { color:var(--red); }
     .t-orange .stripe { background:var(--orange);  } .t-orange .ccta { color:var(--orange); }
     .t-purple .stripe { background:var(--purple);  } .t-purple .ccta { color:var(--purple); }
 
+    /* footer */
     footer { border-top:1px solid var(--gray-200); padding:22px; text-align:center;
              font-size:.78rem; color:var(--gray-500); }
     footer a { color:var(--blue); text-decoration:none; }
@@ -135,9 +146,6 @@
         <div class="cicon">📚</div>
         <div class="ctitle">SEGPA</div>
         <div class="cdesc">Sections d'enseignement général et professionnel adapté, pour les élèves présentant des difficultés scolaires graves et durables.</div>
-        <div class="cstats">
-          <div><div class="cs-val">1 489</div><div class="cs-lbl">Collèges</div></div>
-        </div>
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
@@ -148,9 +156,16 @@
         <div class="cicon">♿</div>
         <div class="ctitle">ULIS</div>
         <div class="cdesc">Unités localisées pour l'inclusion scolaire, permettant la scolarisation des élèves en situation de handicap en milieu ordinaire.</div>
-        <div class="cstats">
-          <div><div class="cs-val">4 152</div><div class="cs-lbl">Collèges</div></div>
-        </div>
+        <div class="ccta">Voir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card t-teal" href="upe2a.html">
+      <div class="stripe"></div>
+      <div class="cbody">
+        <div class="cicon">🌍</div>
+        <div class="ctitle">UPE2A</div>
+        <div class="cdesc">Unités pédagogiques pour élèves allophones arrivants, accompagnant les élèves nouvellement arrivés ne maîtrisant pas le français.</div>
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
@@ -161,9 +176,6 @@
         <div class="cicon">⚽</div>
         <div class="ctitle">Sections sportives</div>
         <div class="cdesc">Pratique sportive intensive intégrée à la scolarité : football, basketball, natation, athlétisme et bien d'autres disciplines.</div>
-        <div class="cstats">
-          <div><div class="cs-val">2 709</div><div class="cs-lbl">Collèges</div></div>
-        </div>
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
@@ -174,9 +186,6 @@
         <div class="cicon">🌐</div>
         <div class="ctitle">Sections internationales</div>
         <div class="cdesc">Enseignements renforcés en langue étrangère avec des partenaires étrangers : anglais, allemand, espagnol, chinois, arabe…</div>
-        <div class="cstats">
-          <div><div class="cs-val">184</div><div class="cs-lbl">Collèges</div></div>
-        </div>
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
@@ -187,9 +196,6 @@
         <div class="cicon">🎵</div>
         <div class="ctitle">Classes à horaires aménagés</div>
         <div class="cdesc">Pratique artistique intensive (musique, danse, arts) avec aménagement de l'emploi du temps pour une formation en conservatoire.</div>
-        <div class="cstats">
-          <div><div class="cs-val">1</div><div class="cs-lbl">Collège</div></div>
-        </div>
         <div class="ccta">Voir la carte →</div>
       </div>
     </a>
