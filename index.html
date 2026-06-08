@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carte scolaire France — Collèges & Lycées publics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,sans-serif;background:#0d0f14;color:#e8eaf0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+.hero{text-align:center;margin-bottom:48px;}
+.badge{display:inline-block;background:rgba(79,110,247,0.15);border:1px solid rgba(79,110,247,0.3);border-radius:100px;padding:5px 16px;font-size:12px;font-weight:600;color:#93a8ff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:14px;}
+h1 span{background:linear-gradient(135deg,#4f6ef7,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sub{color:#6b7280;font-size:1rem;max-width:480px;margin:0 auto;line-height:1.6;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:680px;width:100%;}
+.card{background:rgba(22,25,32,0.97);border:1px solid #2a2f3d;border-radius:18px;padding:28px;text-decoration:none;color:#e8eaf0;transition:border-color .2s,transform .2s,box-shadow .2s;display:flex;flex-direction:column;gap:14px;}
+.card:hover{border-color:#4f6ef7;transform:translateY(-3px);box-shadow:0 16px 40px rgba(79,110,247,0.15);}
+.card.lycee:hover{border-color:#ea580c;box-shadow:0 16px 40px rgba(234,88,12,0.15);}
+.icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.icon.col{background:rgba(79,110,247,0.12);}
+.icon.lyc{background:rgba(234,88,12,0.12);}
+.card h2{font-size:1.2rem;font-weight:800;}
+.card p{font-size:.85rem;color:#6b7280;line-height:1.5;flex:1;}
+.stats{display:flex;gap:16px;}
+.st{display:flex;flex-direction:column;}
+.st-v{font-size:.95rem;font-weight:800;}
+.st-l{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;}
+.cta{display:inline-flex;align-items:center;gap:6px;background:rgba(79,110,247,0.1);border:1px solid rgba(79,110,247,0.3);border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:600;color:#93a8ff;}
+.cta.lyc{background:rgba(234,88,12,0.1);border-color:rgba(234,88,12,0.3);color:#fb923c;}
+footer{margin-top:48px;text-align:center;font-size:.78rem;color:#4b5563;line-height:1.8;}
+footer a{color:#6b7280;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge">Carte scolaire nationale</div>
+  <h1>Collèges & Lycées<br><span>publics en France</span></h1>
+  <p class="sub">Trouvez votre établissement de secteur, visualisez la sectorisation et accédez aux informations de contact.</p>
+</div>
+
+<div class="cards">
+  <a href="colleges.html" class="card">
+    <div class="icon col">🏫</div>
+    <h2>Collèges publics</h2>
+    <p>Recherchez votre collège de secteur par adresse. Visualisez la zone de sectorisation et accédez aux informations de l'établissement.</p>
+    <div class="stats">
+      <div class="st"><span class="st-v">5 419</span><span class="st-l">Collèges</span></div>
+      <div class="st"><span class="st-v">520 000</span><span class="st-l">Adresses</span></div>
+      <div class="st"><span class="st-v">34 000</span><span class="st-l">Communes</span></div>
+    </div>
+    <span class="cta">Ouvrir la carte →</span>
+  </a>
+
+  <a href="lycees.html" class="card lycee">
+    <div class="icon lyc">🎓</div>
+    <h2>Lycées publics</h2>
+    <p>Trouvez les lycées publics de votre département. Consultez les formations disponibles et les informations de contact via l'API Onisep.</p>
+    <div class="stats">
+      <div class="st"><span class="st-v">2 698</span><span class="st-l">Lycées</span></div>
+      <div class="st"><span class="st-v">104</span><span class="st-l">Départements</span></div>
+    </div>
+    <span class="cta lyc">Ouvrir la carte →</span>
+  </a>
+</div>
+
+<footer>
+  Données : <a href="https://data.education.gouv.fr" target="_blank">data.education.gouv.fr</a> ·
+  Géocodage : <a href="https://adresse.data.gouv.fr" target="_blank">Base Adresse Nationale</a> ·
+  Formations : <a href="https://www.onisep.fr" target="_blank">Onisep</a><br>
+  Licence ouverte · Données susceptibles de ne pas être à jour
+</footer>
+</body>
+</html>
