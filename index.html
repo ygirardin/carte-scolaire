@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carte scolaire France — Collèges & Lycées publics</title>
+  <style>
+    :root {
+      --blue: #1a56db;
+      --blue-dark: #1e40af;
+      --blue-light: #eff6ff;
+      --green: #057a55;
+      --green-light: #f0fdf4;
+      --purple: #7e3af2;
+      --purple-light: #f5f3ff;
+      --orange: #d97706;
+      --orange-light: #fffbeb;
+      --red: #e02424;
+      --red-light: #fef2f2;
+      --teal: #0694a2;
+      --teal-light: #ecfeff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-900: #111827;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,.12), 0 8px 32px rgba(0,0,0,.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 56px;
+    }
+    .header-logo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--blue);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1a56db 60%, #2563eb 100%);
+      color: #fff;
+      padding: 56px 24px 64px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { opacity: .85; font-weight: 400; display: block; }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Main grid ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    /* Card grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-stripe {
+      height: 5px;
+      width: 100%;
+    }
+
+    .card-body {
+      padding: 20px 22px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--gray-900);
+    }
+
+    .card-desc {
+      font-size: .875rem;
+      color: var(--gray-500);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .card-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .card-stat-value {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    .card-stat-label {
+      font-size: .72rem;
+      color: var(--gray-500);
+      margin-top: 1px;
+    }
+
+    .card-cta {
+      margin-top: 18px;
+      font-size: .8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Color themes */
+    .theme-blue  .card-stripe { background: var(--blue); }
+    .theme-blue  .card-cta    { color: var(--blue); }
+
+    .theme-green .card-stripe { background: var(--green); }
+    .theme-green .card-cta    { color: var(--green); }
+
+    .theme-purple .card-stripe { background: var(--purple); }
+    .theme-purple .card-cta   { color: var(--purple); }
+
+    .theme-orange .card-stripe { background: var(--orange); }
+    .theme-orange .card-cta   { color: var(--orange); }
+
+    .theme-red   .card-stripe { background: var(--red); }
+    .theme-red   .card-cta   { color: var(--red); }
+
+    .theme-teal  .card-stripe { background: var(--teal); }
+    .theme-teal  .card-cta   { color: var(--teal); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--gray-200);
+      padding: 24px;
+      text-align: center;
+      font-size: .8rem;
+      color: var(--gray-500);
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero { padding: 40px 16px 48px; }
+      main { padding: 32px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="header-logo" href="/">
+      🏫 Carte scolaire nationale
+    </a>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Collèges &amp; Lycées publics en France
+    <span>Données ouvertes du Ministère de l'Éducation nationale</span>
+  </h1>
+  <p>Trouvez votre établissement de secteur, visualisez les dispositifs inclusifs et les sections spécifiques partout en France.</p>
+</div>
+
+<main>
+
+  <!-- Cartes principales -->
+  <div class="section-title">Établissements</div>
+  <div class="grid">
+
+    <a class="card theme-blue" href="colleges.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">🏫</div>
+        <div class="card-title">Collèges publics</div>
+        <div class="card-desc">Recherchez votre collège de secteur par adresse. Visualisez la zone de sectorisation et accédez aux informations de l'établissement.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">5 419</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">520 000</span><span class="card-stat-label">Adresses</span></div>
+          <div class="card-stat"><span class="card-stat-value">34 000</span><span class="card-stat-label">Communes</span></div>
+        </div>
+        <div class="card-cta">Ouvrir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card theme-blue" href="lycees.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">🎓</div>
+        <div class="card-title">Lycées publics</div>
+        <div class="card-desc">Trouvez les lycées publics de votre département. Consultez les formations disponibles et les informations de contact via l'API Onisep.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">2 698</span><span class="card-stat-label">Lycées</span></div>
+          <div class="card-stat"><span class="card-stat-value">104</span><span class="card-stat-label">Départements</span></div>
+        </div>
+        <div class="card-cta">Ouvrir la carte →</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Dispositifs inclusifs -->
+  <div class="section-title">Dispositifs inclusifs &amp; pédagogiques</div>
+  <div class="grid">
+
+    <a class="card theme-orange" href="segpa.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">📚</div>
+        <div class="card-title">SEGPA</div>
+        <div class="card-desc">Sections d'enseignement général et professionnel adapté. Accueillent les élèves présentant des difficultés scolaires graves et durables.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">~1 800</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">~33%</span><span class="card-stat-label">des collèges</span></div>
+        </div>
+        <div class="card-cta">Voir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card theme-green" href="ulis.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">♿</div>
+        <div class="card-title">ULIS</div>
+        <div class="card-desc">Unités localisées pour l'inclusion scolaire. Dispositifs pour la scolarisation des élèves en situation de handicap en milieu ordinaire.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">~2 900</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">~53%</span><span class="card-stat-label">des collèges</span></div>
+        </div>
+        <div class="card-cta">Voir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card theme-teal" href="upe2a.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">🌍</div>
+        <div class="card-title">UPE2A</div>
+        <div class="card-desc">Unités pédagogiques pour élèves allophones arrivants. Accompagnent les élèves nouvellement arrivés en France ne maîtrisant pas le français.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">~850</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">~15%</span><span class="card-stat-label">des collèges</span></div>
+        </div>
+        <div class="card-cta">Voir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card theme-red" href="sections-sportives.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">⚽</div>
+        <div class="card-title">Sections sportives</div>
+        <div class="card-desc">Pratique sportive intensive combinée à la scolarité ordinaire. Football, basketball, natation, athlétisme et bien d'autres disciplines.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">~1 500</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">~28%</span><span class="card-stat-label">des collèges</span></div>
+        </div>
+        <div class="card-cta">Voir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card theme-purple" href="sections-internationales.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">🌐</div>
+        <div class="card-title">Sections internationales</div>
+        <div class="card-desc">Enseignements renforcés en langue étrangère avec des partenaires étrangers. Anglais, allemand, espagnol, chinois, arabe…</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">~300</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">~5%</span><span class="card-stat-label">des collèges</span></div>
+        </div>
+        <div class="card-cta">Voir la carte →</div>
+      </div>
+    </a>
+
+    <a class="card theme-purple" href="classes-ha.html">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-icon">🎵</div>
+        <div class="card-title">Classes à horaires aménagés</div>
+        <div class="card-desc">Pratique artistique intensive (musique, danse, arts) aménageant l'emploi du temps pour permettre une formation spécialisée en conservatoire.</div>
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-value">~400</span><span class="card-stat-label">Collèges</span></div>
+          <div class="card-stat"><span class="card-stat-value">~7%</span><span class="card-stat-label">des collèges</span></div>
+        </div>
+        <div class="card-cta">Voir la carte →</div>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  Données : <a href="https://data.education.gouv.fr">data.education.gouv.fr</a> ·
+  Géocodage : <a href="https://adresse.data.gouv.fr">Base Adresse Nationale</a> ·
+  Formations : <a href="https://www.onisep.fr">Onisep</a><br>
+  Licence ouverte · Données susceptibles de ne pas être à jour
+</footer>
+
+</body>
+</html>
